@@ -1,4 +1,4 @@
-# Quotes
+# Quotes - What I'm currently working on.
 
 - Showing quotes in a simple, beautiful UI
 - Uses latest perks of iOS 15 to render beatiful UI with minimal code
