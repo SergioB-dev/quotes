@@ -8,46 +8,120 @@
 import SwiftUI
 
 struct QuoteScreen: View {
+    @GestureState private var dragOffset = CGSize.zero
+    @State private var moveValue = 0
     @State private var quoteIndex = 0
-    var currentQuote: Quote {
-        return dummyData[quoteIndex]
-    }
+    @State private var currentQuote = dummyData[0]
     var body: some View {
         ZStack {
             Color.indigo
             VStack {
-                QuoteView(quote: currentQuote)
+                Spacer()
+                QuoteView(quote: $currentQuote)
+                    .transition(.slide)
+                    .offset(x: dragOffset.width)
+                    .gesture(
+                        DragGesture()
+                            .updating($dragOffset, body: { value, state, transaction in
+                                state = value.translation
+                                
+                            }).onEnded({ value in
+                                withAnimation(.easeIn(duration: 0.8)) {
+                                    self.moveValue = Int(value.translation.width)
+                                }
+                                print(value.translation.width)
+                                if moveValue < -180 {
+                                    progress()
+                                    print("Progressing because width is \(moveValue)")
+                                } else if moveValue > 200 {
+                                    degress()
+                                    print("Degressing because width is \(moveValue)")
+                                }
+                            })
+                    )
+                
+                ZStack {
+                    Capsule(style: .circular)
+                        .fill(Color.primary.opacity(0.34))
+                    HStack {
+                        CapsuleRowView()
+                            
+                    }
+                }.frame(height: 80)
+                    .padding()
                 Spacer()
                 HStack {
                     Button(action: degress) {
                         Image(systemName: "arrow.left.square.fill")
                             .resizable()
-                        .frame(width: 50, height: 50)
+                            .frame(width: 50, height: 50)
                     }
                     Spacer()
                     Button(action: progress) {
                         Image(systemName: "arrow.right.square.fill")
                             .resizable()
-                        .frame(width: 50, height: 50)
+                            .frame(width: 50, height: 50)
                     }
                 }
                 .padding(28)
-                    .buttonStyle(.plain)
-                    
+                .buttonStyle(.plain)
+                
             }
         }.ignoresSafeArea()
     }
     private func progress() {
-        quoteIndex += 1
+        self.quoteIndex += 1
+        withAnimation {
+            currentQuote = dummyData[quoteIndex]
+        }
     }
     
     private func degress() {
-        quoteIndex -= 1
+        self.quoteIndex -= 1
+        withAnimation {
+            currentQuote = dummyData[quoteIndex]
+        }
     }
 }
 
 struct QuoteScreen_Previews: PreviewProvider {
     static var previews: some View {
         QuoteScreen()
+    }
+}
+
+struct CapsuleRowView: View {
+    var body: some View {
+        ForEach(1..<5){ cir in
+            Circle()
+                .opacity(0.4)
+                .overlay(
+                    overlayContent(cir)
+                )
+        }
+    }
+    @ViewBuilder private func overlayContent(_ index: Int) -> some View {
+        switch index {
+        case 1:
+            Image(systemName: "chart.bar.fill")
+                .resizable()
+                .frame(width: 40, height: 40)
+                .foregroundColor(.teal)
+        case 2:
+            Image(systemName: "paperplane.fill")
+                .resizable()
+                .frame(width: 40, height: 40)
+                .foregroundColor(.teal)
+        case 3:
+            Image(systemName: "seal.fill")
+                .resizable()
+                .frame(width: 40, height: 40)
+                .foregroundColor(.teal)
+        default:
+            Image(systemName: "die.face.3.fill")
+                .resizable()
+                .frame(width: 40, height: 40)
+                .foregroundColor(.teal)
+        }
     }
 }

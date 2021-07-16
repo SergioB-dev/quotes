@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Quote: Codable {
+struct Quote: Codable, Identifiable {
+    let id = UUID()
     let quote: String
     let author: String
     let index: Int

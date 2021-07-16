@@ -17,6 +17,7 @@ struct ContentView: View {
                     Text("Get Quotes").bold()
                         .frame(maxWidth: 300)
                 }
+                .colorInvert()
                     .controlProminence(.increased)
                     .buttonStyle(.bordered)
                     .controlSize(.large)
