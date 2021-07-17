@@ -71,16 +71,16 @@ struct QuoteScreen: View {
     }
     private func progress() {
         self.quoteIndex += 1
-        withAnimation {
+        
             currentQuote = dummyData[quoteIndex]
-        }
+        
     }
     
     private func degress() {
         self.quoteIndex -= 1
-        withAnimation {
+        
             currentQuote = dummyData[quoteIndex]
-        }
+        
     }
 }
 
