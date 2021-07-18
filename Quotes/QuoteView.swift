@@ -9,7 +9,7 @@ import SwiftUI
 
 struct QuoteView: View {
     @State private var showQuotes = false
-    @Binding var quote: Quote
+    let quote: Quote
     var body: some View {
         ZStack {
             Color.white
@@ -48,7 +48,7 @@ struct QuoteView: View {
                 .position(x: 360, y: 370)
         }
         .cornerRadius(25)
-        .navigationBarHidden(true)
+        
         .frame(height: 400)
             .padding()
     }
@@ -56,6 +56,6 @@ struct QuoteView: View {
 
 struct QuoteView_Previews: PreviewProvider {
     static var previews: some View {
-        QuoteView(quote: .constant(dummyData[0]))
+        QuoteView(quote: dummyData[0])
     }
 }

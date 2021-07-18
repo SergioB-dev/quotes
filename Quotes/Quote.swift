@@ -8,8 +8,24 @@
 import Foundation
 
 struct Quote: Codable, Identifiable {
-    let id = UUID()
+    var id: String? 
     let quote: String
     let author: String
-    let index: Int
+    let category: String
+    let likes: Int
+    let dislikes: Int
 }
+
+enum Categories: String, CaseIterable {
+    case life = "Life"
+    case knowledge = "Knowledge"
+    case intuition = "Intuition"
+    case virtue = "Virtue"
+    
+}
+
+
+let array = ["", "",
+"", "",
+             
+]

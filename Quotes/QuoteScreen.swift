@@ -11,14 +11,28 @@ struct QuoteScreen: View {
     @GestureState private var dragOffset = CGSize.zero
     @State private var moveValue = 0
     @State private var quoteIndex = 0
-    @State private var currentQuote = dummyData[0]
+
+    @State private var addQuoteScreen = false
+    @ObservedObject var nm = NetworkManager.shared
+    
+    var currentQuote: Quote {
+        nm.quotes[quoteIndex]
+    }
+    
+    var quoteCount: Int {
+        nm.quotes.count
+    }
     var body: some View {
         ZStack {
             Color.indigo
             VStack {
                 Spacer()
-                QuoteView(quote: $currentQuote)
+                QuoteView(quote: currentQuote)
                     .transition(.slide)
+                
+                    .navigationBarTitle("Hello")
+                    
+                   
                     .offset(x: dragOffset.width)
                     .gesture(
                         DragGesture()
@@ -44,11 +58,21 @@ struct QuoteScreen: View {
                     Capsule(style: .circular)
                         .fill(Color.primary.opacity(0.34))
                     HStack {
-                        CapsuleRowView()
+                        CapsuleRowView(showAddQuote: $addQuoteScreen)
                             
                     }
-                }.frame(height: 80)
+                }
+                .sheet(isPresented: $addQuoteScreen){ AddQuoteScreen() }
+                .frame(height: 80)
                     .padding()
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(action: { }){
+                                Image(systemName: "plus")
+                            }
+                        }
+                    }
+                    
                 Spacer()
                 HStack {
                     Button(action: degress) {
@@ -67,30 +91,48 @@ struct QuoteScreen: View {
                 .buttonStyle(.plain)
                 
             }
+           
         }.ignoresSafeArea()
+            
     }
     private func progress() {
-        self.quoteIndex += 1
-        
-            currentQuote = dummyData[quoteIndex]
-        
+        print("Index: \(quoteIndex), Range: \(quoteCount)")
+        guard quoteIndex + 1 < quoteCount else {
+            print("Out of range, safety exit triggered")
+            return
+        }
+        withAnimation {
+            self.quoteIndex += 1
+        }
+        print("NEW VALUE\n **************\nIndex: \(quoteIndex), Range: \(quoteCount)\n***************")
     }
     
     private func degress() {
-        self.quoteIndex -= 1
-        
-            currentQuote = dummyData[quoteIndex]
-        
+        print("Index: \(quoteIndex), Range: \(quoteCount)")
+        guard quoteIndex + quoteCount > quoteCount else {
+            print("Out of range, safety exit triggered")
+            return
+        }
+        withAnimation {
+            self.quoteIndex -= 1
+                
+        }
+        print("NEW VALUE\n **************\nIndex: \(quoteIndex), Range: \(quoteCount)\n***************")
     }
+    
+  
 }
 
 struct QuoteScreen_Previews: PreviewProvider {
     static var previews: some View {
-        QuoteScreen()
+        NavigationView {
+            QuoteScreen()
+        }
     }
 }
 
 struct CapsuleRowView: View {
+    @Binding var showAddQuote: Bool
     var body: some View {
         ForEach(1..<5){ cir in
             Circle()
@@ -103,10 +145,12 @@ struct CapsuleRowView: View {
     @ViewBuilder private func overlayContent(_ index: Int) -> some View {
         switch index {
         case 1:
-            Image(systemName: "chart.bar.fill")
+            Button(action: {self.showAddQuote.toggle() }){
+            Image(systemName: "arrow.up.message.fill")
                 .resizable()
                 .frame(width: 40, height: 40)
                 .foregroundColor(.teal)
+            }
         case 2:
             Image(systemName: "paperplane.fill")
                 .resizable()
